@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/lead', 'App\Http\Controllers\Lead@index')->name('lead.index');
+Route::get('/lead/fetch/', 'App\Http\Controllers\Lead@fetch')->name('lead.fetch');
+
 Route::get('/', function () {
     return view('welcome');
 });
