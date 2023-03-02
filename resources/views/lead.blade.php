@@ -6,9 +6,14 @@
 		<div>
 			@foreach ($leads as $lead)
 				<div>
-					{{ $lead->id }}
-					{{ $lead->name }}
+					<div>
+						{{ $lead->id }}
+						{{ $lead->name }}
+					</div>
+					<div>Аккаунт: {{ $lead->account->name }}</div>
+					<div>Канал {{ $lead->pipeline->name }}</div>
 				</div>
+				<br>
 			@endforeach
 		</div>
 

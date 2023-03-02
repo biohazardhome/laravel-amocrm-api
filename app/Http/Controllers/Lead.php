@@ -44,6 +44,9 @@ class Lead extends Controller
                             'company_id' => $lead->company->id,
                             'price' => $lead->price,
                         ]);
+
+                        echo 'Сделка id: '. $lead->id .' успешно добавлена '. $lead->name;
+                        echo '<br>';
                     }
 
                     $account = $apiClient->account()->getCurrent([30898054]);
@@ -56,6 +59,9 @@ class Lead extends Controller
                                 'country' => $account->country,
                                 'currency' => $account->currency,
                             ]);
+
+                            echo 'Аккаунт id: '. $account->id .' успешно добавлен '. $account->name;
+                            echo '<br>';
                         }
                     }
 
@@ -71,6 +77,9 @@ class Lead extends Controller
                                 'is_unsorted_on' => $pipeline->isUnsortedOn,
                                 'is_archive' => $pipeline->isArchive,
                             ]);
+
+                            echo 'Канал id: '. $pipeline->id .' успешно добавлен '. $pipeline->name;
+                            echo '<br>';
                         }
                     }
 
