@@ -21,7 +21,7 @@ class Lead extends Model
             'price',
         ],
         $casts = [
-            'name' => 'integer',
+            'name' => 'string',
             'lead_id' => 'integer',
             'group_id' => 'integer',
             'account_id' => 'integer',

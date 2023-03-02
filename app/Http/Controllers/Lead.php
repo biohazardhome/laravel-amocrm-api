@@ -19,7 +19,7 @@ class Lead extends Controller
         $leads = LeadModel::with('account', 'pipeline')
             ->paginate(20);
 
-        return view('index', compact('leads'));
+        return view('lead', compact('leads'));
     }
 
     public function fetch() {        
@@ -48,7 +48,6 @@ class Lead extends Controller
 
                     $account = $apiClient->account()->getCurrent([30898054]);
                     if ($account) {
-                        dump($account);
                         if (!Account::findByAccountId($account->id)) {
                             Account::create([
                                 'account_id' => $account->id,
