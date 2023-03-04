@@ -23,7 +23,11 @@ class Lead extends Controller
     }
 
     public function fetch() {        
-        $apiClient = $this->initAmoCRMApi();
+        [$apiClient, $accessToken] = $this->initAmoCRMApi();
+
+        if ($accessToken->hasExpired()) {
+            return redirect()->route('amocrm-api.get-token');
+        }
 
         try {
             $account = $apiClient->account()->getCurrent(AccountModel::getAvailableWith());
@@ -103,18 +107,19 @@ class Lead extends Controller
         $apiClient->setAccessToken($accessToken)
             ->onAccessTokenRefresh(
                 function (AccessTokenInterface $accessToken, string $baseDomain) {
-                    saveToken(
-                        [
-                            'accessToken' => $accessToken->getToken(),
-                            'refreshToken' => $accessToken->getRefreshToken(),
-                            'expires' => $accessToken->getExpires(),
-                            'baseDomain' => $baseDomain,
-                        ]
-                    );
+                    saveToken([
+                        'accessToken' => $accessToken->getToken(),
+                        'refreshToken' => $accessToken->getRefreshToken(),
+                        'expires' => $accessToken->getExpires(),
+                        'baseDomain' => $baseDomain,
+                    ]);
                 }
             );
 
-        return $apiClient;
+        // dump($apiClient);
+        // dump($apiClient->getOAuthClient());
+        // dump($apiClient->getOAuthClient()->getOAuthProvider()->getAccessToken());
+        return [$apiClient, $accessToken];
     }
 
 }
