@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use AmoCRM\Client\AmoCRMApiClient;
+use Biohazard\AmoCRMApi\AmoCRMApiClient;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Illuminate\Support\Facades\Storage;
@@ -15,17 +15,8 @@ class AmoCRMApi extends Controller
 
     }
 
-    public function getToken() {
-        $clientId = $_ENV['AMOCRM_CLIENT_ID'];
-        $clientSecret = $_ENV['AMOCRM_CLIENT_SECRET'];
-        $redirectUri = $_ENV['AMOCRM_CLIENT_REDIRECT_URI'];
-        $subdomain = $_ENV['AMOCRM_CLIENT_SUBDOMAIN'];
-
-        $apiClient = new AmoCRMApiClient($clientId, $clientSecret, $redirectUri);
-        $apiClient->setAccountBaseDomain($subdomain);
-        $accessToken = getToken();
-
-        $apiClient->setAccessToken($accessToken)
+    public function getToken(AmoCRMApiClient $amocrm, AccessToken $accessToken) {
+        $amocrm->setAccessToken($accessToken)
             ->onAccessTokenRefresh(
                 function (AccessTokenInterface $accessToken, string $baseDomain) {
                     saveToken([
@@ -41,7 +32,7 @@ class AmoCRMApi extends Controller
             echo 'Истекло время действия токена. Нажмите на кнопку амо и разрешите доступ, затем обновите страницу';
 
             $state = bin2hex(random_bytes(16));
-            echo $apiClient->getOAuthClient()->getOAuthButton([
+            echo $amocrm->getOAuthClient()->getOAuthButton([
                 'title' => 'Установить интеграцию',
                 'compact' => true,
                 'class_name' => 'className',
@@ -70,8 +61,8 @@ class AmoCRMApi extends Controller
 
                     if (!$accessToken->hasExpired()) {
                         $storage = Storage::disk('local');
-                        $storage->delete(TOKEN_FILE);
-                        $storage->put(TOKEN_FILE, $tokenFile);
+                        $storage->delete(AmoCRMApiClient::TOKEN_FILE);
+                        $storage->put(AmoCRMApiClient::TOKEN_FILE, $tokenFile);
                     }
                 } else {
                     exit('Invalid access token ' . var_export($accessToken, true));
@@ -79,29 +70,22 @@ class AmoCRMApi extends Controller
             }
         }
 
-        return redirect()->back();
+        // return redirect()->back();
     }
 
-    public function getToken2() {
-        $clientId = $_ENV['AMOCRM_CLIENT_ID'];
-        $clientSecret = $_ENV['AMOCRM_CLIENT_SECRET'];
-        $redirectUri = $_ENV['AMOCRM_CLIENT_REDIRECT_URI'];
-        $subdomain = $_ENV['AMOCRM_CLIENT_SUBDOMAIN'];
-
-        $apiClient = new AmoCRMApiClient($clientId, $clientSecret, $redirectUri);
-
+    public function getToken2(AmoCRMApiClient $amocrm, AccessToken $accessToken) {
         try {
             $code = request()->get('code');
             if (!empty($code)) {
-                $apiClient->setAccountBaseDomain(request()->get('referer'));
-                $accessToken = $apiClient->getOAuthClient()->getAccessTokenByCode($code);
+                $amocrm->setAccountBaseDomain(request()->get('referer'));
+                $accessToken = $amocrm->getOAuthClient()->getAccessTokenByCode($code);
 
                 if (!$accessToken->hasExpired()) {
                     saveToken([
                         'accessToken' => $accessToken->getToken(),
                         'refreshToken' => $accessToken->getRefreshToken(),
                         'expires' => $accessToken->getExpires(),
-                        'baseDomain' => $apiClient->getAccountBaseDomain(),
+                        'baseDomain' => $amocrm->getAccountBaseDomain(),
                     ]);
                 }
 

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use AmoCRM\Client\AmoCRMApiClient;
+use Biohazard\AmoCRMApi\AmoCRMApiClient;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use AmoCRM\Exceptions\AmoCRMApiException;
 use AmoCRM\Models\AccountModel;
+use League\OAuth2\Client\Token\AccessToken;
 
 use App\Models\Lead as LeadModel;
 use App\Models\Pipeline;
@@ -15,24 +16,33 @@ use App\Models\Account;
 class Lead extends Controller
 {
     
-    public function index() {
+    public function index(AmoCRMApiClient $amocrm, AccessToken $accessToken) {
+        try {
+            $account = $amocrm->account()->getCurrent(AccountModel::getAvailableWith());
+            dump($account);
+            // dump($accessToken->hasExpired());
+            // dump($amocrm->getAccessToken());
+        } catch (AmoCRMApiException $e) {
+            echo $e->getMessage();
+        }
+
         $leads = LeadModel::with('account', 'pipeline')
             ->paginate(20);
 
         return view('lead', compact('leads'));
     }
 
-    public function fetch() {        
-        [$apiClient, $accessToken] = $this->initAmoCRMApi();
+    public function fetch(AmoCRMApiClient $amocrm, AccessToken $accessToken) {        
+        
 
         if ($accessToken->hasExpired()) {
             return redirect()->route('amocrm-api.get-token');
         }
 
         try {
-            $account = $apiClient->account()->getCurrent(AccountModel::getAvailableWith());
+            $account = $amocrm->account()->getCurrent(AccountModel::getAvailableWith());
 
-            $leads = $apiClient->leads();
+            $leads = $amocrm->leads();
             if ($leads) {
                 $leadsCollection = $leads->get();
                 foreach ($leadsCollection as $lead) {
@@ -53,7 +63,7 @@ class Lead extends Controller
                         echo '<br>';
                     }
 
-                    $account = $apiClient->account()->getCurrent([30898054]);
+                    $account = $amocrm->account()->getCurrent([30898054]);
                     if ($account) {
                         if (!Account::findByAccountId($account->id)) {
                             Account::create([
@@ -69,7 +79,7 @@ class Lead extends Controller
                         }
                     }
 
-                    $pipeline = $apiClient->pipelines()->getOne($lead->pipelineId);
+                    $pipeline = $amocrm->pipelines()->getOne($lead->pipelineId);
                     if ($pipeline) {
                         if (!Pipeline::findByPipelineId($pipeline->id)) {
                             Pipeline::create([
@@ -92,34 +102,6 @@ class Lead extends Controller
         } catch (AmoCRMApiException $e) {
             echo $e->getMessage();
         }
-    }
-
-    protected function initAmoCRMApi() {
-        $clientId = $_ENV['AMOCRM_CLIENT_ID'];
-        $clientSecret = $_ENV['AMOCRM_CLIENT_SECRET'];
-        $redirectUri = $_ENV['AMOCRM_CLIENT_REDIRECT_URI'];
-        $subdomain = $_ENV['AMOCRM_CLIENT_SUBDOMAIN'];
-
-        $apiClient = new AmoCRMApiClient($clientId, $clientSecret, $redirectUri);
-        $apiClient->setAccountBaseDomain($subdomain);
-        $accessToken = getToken();
-
-        $apiClient->setAccessToken($accessToken)
-            ->onAccessTokenRefresh(
-                function (AccessTokenInterface $accessToken, string $baseDomain) {
-                    saveToken([
-                        'accessToken' => $accessToken->getToken(),
-                        'refreshToken' => $accessToken->getRefreshToken(),
-                        'expires' => $accessToken->getExpires(),
-                        'baseDomain' => $baseDomain,
-                    ]);
-                }
-            );
-
-        // dump($apiClient);
-        // dump($apiClient->getOAuthClient());
-        // dump($apiClient->getOAuthClient()->getOAuthProvider()->getAccessToken());
-        return [$apiClient, $accessToken];
     }
 
 }

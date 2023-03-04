@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9d766fddf96dcd7125057ba02b462d52",
+    "content-hash": "5597603a56b646034dea9533c056db89",
     "packages": [
         {
             "name": "amocrm/amocrm-api-library",
@@ -133,6 +133,53 @@
                 "source": "https://github.com/amocrm/amocrm-oauth-client/tree/2.0.8"
             },
             "time": "2021-01-13T22:59:28+00:00"
+        },
+        {
+            "name": "biohazard/amocrm-api-laravel",
+            "version": "0.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/biohazardhome/amocrm-api-laravel.git",
+                "reference": "74d9c4017fe916b3b4aae2ff00e63c2d1a000b1e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/biohazardhome/amocrm-api-laravel/zipball/74d9c4017fe916b3b4aae2ff00e63c2d1a000b1e",
+                "reference": "74d9c4017fe916b3b4aae2ff00e63c2d1a000b1e",
+                "shasum": ""
+            },
+            "require": {
+                "amocrm/amocrm-api-library": "0.13.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Biohazard\\AmoCRMApi\\AmoCrmApiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Biohazard\\AmoCRMApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "biohazardhome",
+                    "email": "biohazardhome@gmail.com"
+                }
+            ],
+            "description": "AmoCRM api for Laravel 10",
+            "support": {
+                "issues": "https://github.com/biohazardhome/amocrm-api-laravel/issues",
+                "source": "https://github.com/biohazardhome/amocrm-api-laravel/tree/0.0.6"
+            },
+            "time": "2023-03-04T14:32:57+00:00"
         },
         {
             "name": "brick/math",
