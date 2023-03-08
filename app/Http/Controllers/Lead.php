@@ -25,14 +25,11 @@ class Lead extends Controller
 
     public function fetch(AmoCRMApiClient $amocrm, AccessToken $accessToken) {        
         
-
         if ($accessToken->hasExpired()) {
             return redirect()->route('amocrm-api.get-token');
         }
 
         try {
-            $account = $amocrm->account()->getCurrent(AccountModel::getAvailableWith());
-
             $leads = $amocrm->leads();
             if ($leads) {
                 $leadsCollection = $leads->get();
@@ -54,7 +51,7 @@ class Lead extends Controller
                         echo '<br>';
                     }
 
-                    $account = $amocrm->account()->getCurrent([30898054]);
+                    $account = $amocrm->account()->getCurrent([$lead->accountId]);
                     if ($account) {
                         if (!Account::findByAccountId($account->id)) {
                             Account::create([
