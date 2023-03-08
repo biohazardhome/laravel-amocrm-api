@@ -18,8 +18,8 @@ class AmoCRMApi extends Controller
     public function getToken(AmoCRMApiClient $amocrm, AccessToken $accessToken) {
         $amocrm->setAccessToken($accessToken)
             ->onAccessTokenRefresh(
-                function (AccessTokenInterface $accessToken, string $baseDomain) {
-                    saveToken([
+                function (AccessTokenInterface $accessToken, string $baseDomain) use ($amocrm) {
+                    $amocrm->saveTokenFile([
                         'accessToken' => $accessToken->getToken(),
                         'refreshToken' => $accessToken->getRefreshToken(),
                         'expires' => $accessToken->getExpires(),
