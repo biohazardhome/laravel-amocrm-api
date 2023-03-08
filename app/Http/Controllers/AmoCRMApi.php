@@ -73,23 +73,24 @@ class AmoCRMApi extends Controller
         // return redirect()->back();
     }
 
-    public function getToken2(AmoCRMApiClient $amocrm, AccessToken $accessToken) {
+    public function getToken2(AmoCRMApiClient $amocrm, string $code) {
         try {
-            $code = request()->get('code');
             if (!empty($code)) {
-                $amocrm->setAccountBaseDomain(request()->get('referer'));
+                $amocrm->setAccountBaseDomain(env('AMOCRM_SUBDOMAIN'));
                 $accessToken = $amocrm->getOAuthClient()->getAccessTokenByCode($code);
-
+                
                 if (!$accessToken->hasExpired()) {
-                    saveToken([
+                    $amocrm->saveTokenFile([
                         'accessToken' => $accessToken->getToken(),
                         'refreshToken' => $accessToken->getRefreshToken(),
                         'expires' => $accessToken->getExpires(),
                         'baseDomain' => $amocrm->getAccountBaseDomain(),
                     ]);
-                }
 
-                echo 'Успешно сохранен файл token_info.json';
+                    echo 'Успешно сохранен файл token_info.json';
+                } else {
+                    echo 'Время действия токена истекло, попробуйте еще раз';
+                }
             }
         } catch (Exception $e) {
             echo $e->getMessage();
