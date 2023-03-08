@@ -17,6 +17,10 @@ docker run --rm \
 ./vendor/bin/sail build
 ./vendor/bin/sail artisan migrate
 ```
-
-По ссылке http://localhost/lead/fetch/ выгружается сделки в базу данных
+Routs
+```
+http://localhost/lead/fetch/ Выгружается сделки в базу данных
 http://localhost/lead/ Отображаются загруженные в базу данных сделки 
+http://localhost/amocrm-api/get-token2/{code} - Обновление файла токена
+
+```
