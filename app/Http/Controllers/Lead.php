@@ -16,16 +16,7 @@ use App\Models\Account;
 class Lead extends Controller
 {
     
-    public function index(AmoCRMApiClient $amocrm, AccessToken $accessToken) {
-        try {
-            $account = $amocrm->account()->getCurrent(AccountModel::getAvailableWith());
-            dump($account);
-            // dump($accessToken->hasExpired());
-            // dump($amocrm->getAccessToken());
-        } catch (AmoCRMApiException $e) {
-            echo $e->getMessage();
-        }
-
+    public function index() {
         $leads = LeadModel::with('account', 'pipeline')
             ->paginate(20);
 
