@@ -24,10 +24,6 @@ class Lead extends Controller
 
     public function fetch(AmoCRMApiClient $amocrm, AccessToken $accessToken) {        
         
-        if ($accessToken->hasExpired()) {
-            return redirect()->route('amocrm-api.get-token');
-        }
-
         try {
             $leads = $amocrm->leads();
             if ($leads) {

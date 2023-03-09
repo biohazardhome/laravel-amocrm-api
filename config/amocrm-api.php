@@ -5,4 +5,5 @@ return [
     'secret' => env('AMOCRM_SECRET', 'chlQrrh7YUfgaQ0JuKoJBcBsgt1UdiiQZEAEH0U0dUF8pRPSJ1CXOr7dLLU8fvcr'),
     'redirect_uri' => env('AMOCRM_REDIRECT_URI', 'http://f0783886.xsph.ru/index.php'),
     'subdomain' => env('AMOCRM_SUBDOMAIN', 'stalkernikko.amocrm.ru'),
+    'middleware_redirect' => env('AMOCRM_MIDDLEWARE_REDIRECT', 'amocrm-api.get-token'),
 ];

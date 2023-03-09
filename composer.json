@@ -6,7 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "biohazard/amocrm-api-laravel": "^0.0.6",
+        "biohazard/amocrm-api-laravel": "dev-master",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
