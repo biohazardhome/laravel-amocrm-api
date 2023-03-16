@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AmoCRMApi;
+use App\Http\Controllers\Lead;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,21 +15,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/amocrm-api', 'App\Http\Controllers\AmoCRMApi@index')
-    ->name('amocrm-api.index');
+Route::prefix('amocrm-api')->name('amocrm-api.')->controller(AmoCRMApi::class)->group(function() {
+    Route::get('/', 'index');
 
-Route::get('/amocrm-api/get-token', 'App\Http\Controllers\AmoCRMApi@getToken')
-    ->name('amocrm-api.get-token');
+    Route::get('/get-token', 'getToken')
+        ->name('get-token');
 
-Route::get('/amocrm-api/get-token2/{code}', 'App\Http\Controllers\AmoCRMApi@getToken2')
-    ->name('amocrm-api.get-token2');
+    Route::get('/get-token2/{code}', 'getToken2')
+        ->name('get-token2');
+});
 
-Route::get('/lead', 'App\Http\Controllers\Lead@index')
-    ->name('lead.index');
+Route::prefix('lead')->name('lead.')->controller(Lead::class)->group(function() {
+    Route::get('/', 'index');
 
-Route::get('/lead/fetch/', 'App\Http\Controllers\Lead@fetch')
-    ->middleware('amocrm-api')
-    ->name('lead.fetch');
+    Route::get('/fetch/', 'fetch')
+        ->middleware('amocrm-api')
+        ->name('fetch');
+});
 
 Route::get('/', function () {
     return view('welcome');
